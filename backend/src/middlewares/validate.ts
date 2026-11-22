@@ -15,7 +15,6 @@ export const validate =
       }));
       return next(new AppError(400, "Validation failed", details));
     }
-    if (source === "body") req.body = result.data;
-    else res.locals[source] = result.data;
+    res.locals[source] = result.data;
     next();
   };

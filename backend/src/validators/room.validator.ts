@@ -8,6 +8,7 @@ export type ListRoomQuery = z.infer<typeof listRoomQuerySchema>;
 
 export const createRoomBodySchema = z.object({
       name: z.string().trim().min(1).max(50),  
+      isActive: z.enum(["true", "false"]).transform((v) => v === "true"),
 });
 export type CreateRoomBody = z.infer<typeof createRoomBodySchema>;
 
@@ -17,7 +18,8 @@ export const updateRoomParamsSchema = z.object({
 export type UpdateRoomParams = z.infer<typeof updateRoomParamsSchema>;
 
 export const updateRoomBodySchema = z.object({
-    name: z.string().trim().min(1).max(50),  
+    name: z.string().trim().min(1).max(50), 
+    isActive: z.enum(["true", "false"]).transform((v) => v === "true"), 
 });
 export type UpdateRoomBody = z.infer<typeof updateRoomBodySchema>;
 
