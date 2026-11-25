@@ -5,7 +5,10 @@ import {escapeRegex} from "../utils/escapteRegex";
 
 export async function listRooms(data:ListRoomQuery){
     const searchName = { $regex: escapeRegex(data.name ?? ""), $options: "i" };
-    return await RoomModel.find({name: searchName, isActive: data.isActive}).lean();
+    // Only filter on isActive when it was actually provided — `{isActive: undefined}` matches nothing
+    const filter: Record<string, unknown> = { name: searchName };
+    if (data.isActive !== undefined) filter.isActive = data.isActive;
+    return await RoomModel.find(filter).sort({ name: 1 }).lean();
 }
 
 export async function createRoom(data:CreateRoomBody){

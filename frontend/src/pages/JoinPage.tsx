@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ArrowRight, Check, Clock3, HeartPulse, ShieldCheck, Sparkles, Stethoscope } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
@@ -8,7 +8,20 @@ export function JoinPage() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [activeTicket, setActiveTicket] = useState<PatientTicket["ticket"] | null>(null);
   const navigate = useNavigate();
+
+  // If this device already holds a waiting/serving ticket, don't offer the join form again.
+  useEffect(() => {
+    let alive = true;
+    Promise.resolve(api<PatientTicket>("/api/tickets/my", {}, false))
+      .then((result) => {
+        const status = result?.ticket?.status;
+        if (alive && (status === "waiting" || status === "serving")) setActiveTicket(result.ticket);
+      })
+      .catch(() => { /* no ticket yet — show the form */ });
+    return () => { alive = false; };
+  }, []);
 
   async function join(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,13 +61,18 @@ export function JoinPage() {
           <h2 className="mt-3 text-2xl font-semibold tracking-tight text-slate-800">Join the queue</h2>
           <p className="mt-1 text-sm text-slate-400">A few details and your place is saved.</p>
         </div>
-        <form onSubmit={join} className="px-7 pb-7 pt-6 sm:px-10 sm:pb-9">
+        {activeTicket ? <div className="px-7 pb-7 pt-6 text-center sm:px-10 sm:pb-9">
+          <p className="text-sm text-slate-500">You’re already in the queue as</p>
+          <div className="mt-2 text-6xl font-semibold tracking-[-.05em] text-clinic-900">{activeTicket.displayNumber}</div>
+          <Link to="/ticket" className="primary-button mt-6 w-full">View my ticket <ArrowRight size={17} /></Link>
+          <p className="mt-4 text-xs text-slate-400">You can join again once your turn is completed or missed.</p>
+        </div> : <form onSubmit={join} className="px-7 pb-7 pt-6 sm:px-10 sm:pb-9">
           <label htmlFor="patient-name" className="mb-2 block text-sm font-medium text-slate-600">Your full name</label>
           <input id="patient-name" autoComplete="name" maxLength={100} required value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Alex Morgan" className="text-input" />
           {error && <p role="alert" className="mt-3 rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>}
           <button disabled={loading || !name.trim()} className="primary-button mt-5 w-full">{loading ? "Saving your place…" : <>Get my queue number <ArrowRight size={17} /></>}</button>
           <div className="mt-5 flex items-start gap-2.5 rounded-xl bg-clinic-50 p-3.5 text-xs leading-5 text-slate-500"><ShieldCheck size={15} className="mt-0.5 shrink-0 text-clinic-600" /><span>Your place is saved on this device. You can close this page and come back anytime.</span></div>
-        </form>
+        </form>}
         <div className="flex items-center justify-between border-t border-slate-100 bg-slate-50/70 px-7 py-4 text-xs text-slate-400 sm:px-10"><span className="flex items-center gap-1.5"><Check size={13} className="text-clinic-600" /> Quick and account-free</span><Link to="/display" className="font-medium text-clinic-700 hover:text-clinic-900">See clinic display</Link></div>
       </div>
     </section>

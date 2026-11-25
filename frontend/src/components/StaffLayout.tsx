@@ -1,4 +1,4 @@
-import { Activity, BarChart3, LogOut, MonitorPlay, Settings2, Users, WandSparkles } from "lucide-react";
+import { Activity, BarChart3, DoorOpen, LogOut, MonitorPlay, Settings2, Users, WandSparkles } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -23,6 +23,7 @@ export function StaffLayout() {
         <NavLink to="/staff" end className={navClass}><Settings2 size={17} /> Queue desk</NavLink>
         {staff?.role === "admin" && <>
           <NavLink to="/staff/overview" className={navClass}><BarChart3 size={17} /> Overview</NavLink>
+          <NavLink to="/staff/rooms" className={navClass}><DoorOpen size={17} /> Rooms</NavLink>
           <NavLink to="/staff/team" className={navClass}><Users size={17} /> Team</NavLink>
         </>}
       </nav>

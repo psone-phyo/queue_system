@@ -6,6 +6,7 @@ import { DisplayPage } from "./pages/DisplayPage";
 import { JoinPage } from "./pages/JoinPage";
 import { OverviewPage } from "./pages/OverviewPage";
 import { PatientTicketPage } from "./pages/PatientTicketPage";
+import { RoomsPage } from "./pages/RoomsPage";
 import { QueueDeskPage } from "./pages/QueueDeskPage";
 import { StaffLoginPage } from "./pages/StaffLoginPage";
 import { TeamPage } from "./pages/TeamPage";
@@ -23,6 +24,7 @@ export default function App() {
         <Route index element={<QueueDeskPage />} />
         <Route element={<ProtectedRoute admin />}>
           <Route path="overview" element={<OverviewPage />} />
+          <Route path="rooms" element={<RoomsPage />} />
           <Route path="team" element={<TeamPage />} />
         </Route>
       </Route>

@@ -31,6 +31,13 @@ describe("patient queue join", () => {
     expect(api).toHaveBeenCalledWith("/api/tickets", expect.objectContaining({ method: "POST" }), false);
   });
 
+  it("shows a link to the ticket instead of the form when a ticket is already active", async () => {
+    vi.mocked(api).mockResolvedValue({ ticket: { displayNumber: "A007", status: "waiting" } });
+    render(<MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}><JoinPage /></MemoryRouter>);
+    expect(await screen.findByRole("link", { name: /view my ticket/i })).toHaveAttribute("href", "/ticket");
+    expect(screen.queryByLabelText(/your full name/i)).not.toBeInTheDocument();
+  });
+
 });
 
 describe("queue formatting", () => {
