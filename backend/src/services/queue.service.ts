@@ -194,7 +194,7 @@ export async function getDisplay() {
       .lean(),
     TicketModel.find({ queueDate: date, status: "waiting" })
       .sort({ number: 1 })
-      .limit(5)
+      .limit(50)
       .lean(),
     TicketModel.find({ queueDate: date, status: "missed" })
       .sort({ missedAt: -1 })
