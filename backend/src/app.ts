@@ -7,6 +7,7 @@ import pinoHttp from "pino-http";
 import { env } from "./config/env";
 import { logger } from "./config/logger";
 import roomRoutes from "./routes/room.route";
+import authRoutes from "./routes/auth.route";
 import { notFound, errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
@@ -23,6 +24,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/rooms", roomRoutes);
+app.use("/api/auth", authRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
