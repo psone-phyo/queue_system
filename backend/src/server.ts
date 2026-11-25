@@ -3,7 +3,9 @@ import app from "./app";
 import { env } from "./config/env";
 import { logger } from "./config/logger";
 import { connectDB } from "./config/db";
+import { initSocket } from "./config/socket";
 const server = http.createServer(app);
+initSocket(server);
 
 async function start() {
   await connectDB();
