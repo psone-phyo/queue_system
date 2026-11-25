@@ -12,6 +12,7 @@ import ticketRoutes from "./routes/ticket.route";
 import queueRoutes from "./routes/queue.route";
 import staffRoutes from "./routes/staff.route";
 import statsRoutes from "./routes/stats.route";
+import qrRoutes from "./routes/qr.route";
 import { notFound, errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
@@ -33,6 +34,7 @@ app.use("/api/tickets", ticketRoutes);
 app.use("/api/queue", queueRoutes);
 app.use("/api/staff", staffRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/qr", qrRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
