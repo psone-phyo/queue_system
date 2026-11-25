@@ -1,4 +1,6 @@
-const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ?? "http://localhost:3000";
+// Use Vite's same-origin proxy in development to avoid browser CORS and hostname mismatches.
+// Set VITE_API_URL when the frontend and API are deployed on separate origins.
+const API_BASE = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, "") ?? "";
 let accessToken: string | null = null;
 
 export function setAccessToken(token: string | null) {
