@@ -4,6 +4,10 @@ import { joinQueueSchema } from "../validators/ticket.validator";
 import { patientSession } from "../middlewares/patientSession";
 import { optionalAuth } from "../middlewares/optionalAuth";
 import * as ticketController from "../controllers/ticket.controller";
+import { requireAuth } from "../middlewares/requireAuth";
+import { requireRole } from "../middlewares/requireRole";
+import * as queueController from "../controllers/queue.controller";
+import { assignRoomSchema, ticketParamsSchema } from "../validators/queue.validator";
 
 const router = Router();
 
@@ -20,5 +24,11 @@ router.post(
 
 // GET /api/tickets/my — patient reads their own ticket via cookie
 router.get("/my", ticketController.myTicket);
+
+const staffOnly = [requireAuth, requireRole("admin", "receptionist")];
+router.patch("/:id/room", ...staffOnly, validate(ticketParamsSchema, "params"), validate(assignRoomSchema), queueController.assignRoom);
+router.patch("/:id/missed", ...staffOnly, validate(ticketParamsSchema, "params"), queueController.markMissed);
+router.patch("/:id/completed", ...staffOnly, validate(ticketParamsSchema, "params"), queueController.markCompleted);
+router.patch("/:id/remove", ...staffOnly, validate(ticketParamsSchema, "params"), queueController.removeTicket);
 
 export default router;
