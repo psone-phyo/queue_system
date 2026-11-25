@@ -21,6 +21,8 @@ export async function join(req: Request, res: Response, next: NextFunction) {
     // If req.staff exists, the request came from an authenticated receptionist → walk-in
     const source: "qr" | "walk-in" = req.staff ? "walk-in" : "qr";
     const { ticket, token } = await ticketService.joinQueue(name, source);
+    const publicTicket = ticket.toObject();
+    delete (publicTicket as { token?: string }).token;
 
     // Set the restore cookie only for QR patients (staff-added walk-ins don't need it)
     if (!req.staff) {
@@ -34,7 +36,7 @@ export async function join(req: Request, res: Response, next: NextFunction) {
     }
 
     // Walk-in: return the token so staff can share it with the patient if needed
-    res.status(201).json({ ticket, ...(req.staff ? { token } : {}) });
+    res.status(201).json({ ticket: publicTicket, ...(req.staff ? { token } : {}) });
   } catch (err) {
     next(err);
   }
@@ -49,6 +51,7 @@ export async function myTicket(req: Request, res: Response, next: NextFunction) 
     const token = req.cookies?.[PATIENT_COOKIE];
     if (!token) return res.status(404).json({ message: "No active ticket" });
     const result = await ticketService.getMyTicket(token);
+    delete (result.ticket as { token?: string }).token;
     res.json(result);
   } catch (err) {
     next(err);
